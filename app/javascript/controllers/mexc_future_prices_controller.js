@@ -5,20 +5,20 @@ import axios from "axios";
 export default class extends Controller {
   static targets = ["price"]; // Define targets for Stimulus
 
-  async connect() {
-    console.log("mexc controller connected");
+  hoursAgoUnix(hours){  // Replace x with the number of hours
+    const timeXHoursAgoInSeconds = Math.floor((Date.now() - (hours * 60 * 60 * 1000)) / 1000);
+    return timeXHoursAgoInSeconds
+  }
 
-    try {
-      const response = await axios.get('/data/data.json');
-      const jsonData = response.data;
-      console.log("Loaded JSON data:", jsonData);
+  currentTimeUnix(){
+    const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+    return currentTimeInSeconds
+  }
 
-      // Organize data by date
-      const organizedData = this.organizeDataByDate(jsonData);
-      console.log("Organized Data:", organizedData);
-    } catch (error) {
-      console.error('Error loading JSON:', error);
-    }
+  connect() {
+    console.log("mexc controller connected")
+    // this.test()
+    this.getAllTickers()
   }
 
   organizeDataByDate(jsonData) {
@@ -42,4 +42,33 @@ export default class extends Controller {
 
     return organizedData;
   }
+
+  async test(){
+    try {
+      const response = await axios.get('/data/data.json');
+      const jsonData = response.data;
+      console.log("Loaded JSON data:", jsonData);
+
+      // Organize data by date
+      const organizedData = this.organizeDataByDate(jsonData);
+      console.log("Organized Data:", organizedData);
+    } catch (error) {
+      console.error('Error loading JSON:', error);
+    }
+  }
+
+  async getAllTickers(){
+    const tickers = {}
+    try {
+      const response = await axios.get('/data/tickers.json')
+      // console.log(response)
+      const jsonData = response.data
+      // console.log("Tickers: ", jsonData)
+      const tickets = jsonData.data
+      console.log(tickets)
+    } catch(error){
+      console.error('Error loading JSON:', error);
+    }
+  }
+
 }
